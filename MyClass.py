@@ -22,7 +22,8 @@ class Bland:
         self.info = info
         self.product_list = []
 
-    def setBland(self, industry, country, bland_num, info):
+    def setBland(self, name, industry, country, bland_num, info):
+        self.name = name
         self.industry = industry
         self.country = country
         self.bland_num = bland_num
@@ -71,6 +72,7 @@ class Bland:
 def change_label(name, test_output):
     test_output.delete(0, END)
     test_output.insert(0, name)
+    return test_output
 
 
 class ProductFrame(Frame):
@@ -79,8 +81,8 @@ class ProductFrame(Frame):
         self.initUI()
         self.bland = bland
 
-    def button1(self, name1, spec1, info1, name2, spec2, info2, name3, spec3, info3, name4, spec4, info4, name5, spec5,
-                info5, output):
+    def buttonSubmit(self, name1, spec1, info1, name2, spec2, info2, name3, spec3, info3, name4, spec4, info4, name5,
+                     spec5, info5, output):
         change_label(self.bland.combineInfoProduct(name1.get(), spec1.get(), info1.get(),
                                                    name2.get(), spec2.get(), info2.get(),
                                                    name3.get(), spec3.get(), info3.get(),
@@ -92,6 +94,36 @@ class ProductFrame(Frame):
         name3.delete(0, END), spec3.delete(0, END), info3.delete(0, END),
         name4.delete(0, END), spec4.delete(0, END), info4.delete(0, END),
         name5.delete(0, END), spec5.delete(0, END), info5.delete(0, END)
+
+    def buttonExport(self, name1, spec1, info1, name2, spec2, info2, name3, spec3, info3, name4, spec4, info4, name5,
+                     spec5, info5):
+        text_output = self.bland.combineInfoProduct(name1.get(), spec1.get(), info1.get(),
+                                                    name2.get(), spec2.get(), info2.get(),
+                                                    name3.get(), spec3.get(), info3.get(),
+                                                    name4.get(), spec4.get(), info4.get(),
+                                                    name5.get(), spec5.get(), info5.get())
+
+        workbook = xlsxwriter.Workbook('批量上传.xlsx')
+        worksheet = workbook.add_worksheet()
+        worksheet.write('A1', 'classid')
+        worksheet.write('B1', 'title')
+        worksheet.write('C1', 'ftitle')
+        worksheet.write('D1', 'newstext')
+        worksheet.write('E1', 'titlepic')
+        worksheet.write('F1', 'category')
+        worksheet.write('G1', 'subcategory')
+        worksheet.write('H1', 'Tags')
+
+        worksheet.write('A2', 1)
+        worksheet.write('B2', self.bland.name)
+        worksheet.write('C2', self.bland.name)
+        worksheet.write('D2', text_output)
+        worksheet.write('E2', 'http://info.aoyoumall.com/Mypicture/' + self.bland.bland_num + '.jpg')
+        worksheet.write('F2', self.bland.country)
+        worksheet.write('G2', self.bland.industry)
+        worksheet.write('H2', '')
+
+        workbook.close()
 
     def initUI(self):
         self.master.title("批量上传助手 Beta version")
@@ -164,10 +196,18 @@ class ProductFrame(Frame):
         output.pack(side=TOP, fill=BOTH, padx=5, expand=True)
         bt1 = Button(frame6, text='Submit', width=20, height=3,
                      command=lambda: [
-                         self.button1(name1, spec1, info1, name2, spec2, info2, name3, spec3, info3, name4, spec4,
-                                      info4, name5, spec5, info5, output)
+                         self.buttonSubmit(name1, spec1, info1, name2, spec2, info2, name3, spec3, info3, name4, spec4,
+                                           info4, name5, spec5, info5, output)
                      ])
         bt1.pack(side=TOP, padx=5, pady=5)
+        bt2 = Button(frame6, text='Export', width=20, height=3,
+                     command=lambda: [
+                         self.buttonSubmit(name1, spec1, info1, name2, spec2, info2, name3, spec3, info3, name4, spec4,
+                                           info4, name5, spec5, info5, output),
+                         self.buttonExport(name1, spec1, info1, name2, spec2, info2, name3, spec3, info3, name4, spec4,
+                                           info4, name5, spec5, info5)
+                     ])
+        bt2.pack(side=TOP, padx=5, pady=5)
 
 
 class RootFrame(Frame):
@@ -177,8 +217,8 @@ class RootFrame(Frame):
         self.initUI()
         self.bland = bland
 
-    def createProduct(self, industry, country, img_start, bland_info, bland):
-        bland.setBland(industry, country, img_start, bland_info)
+    def createProduct(self, name, industry, country, img_start, bland_info, bland):
+        bland.setBland(name, industry, country, img_start, bland_info)
         self.master.destroy()
         product = Tk()
         ProductFrame(bland)
@@ -187,6 +227,10 @@ class RootFrame(Frame):
     def initUI(self):
         self.master.title("批量上传助手 Beta version")
         self.pack(fill=BOTH, expand=True)
+
+        Label(self, text='品牌').pack()
+        text_name = Entry(self, width=20)
+        text_name.pack()
 
         Label(self, text='国家').pack()
         text_country = Entry(self, width=20)
@@ -206,6 +250,6 @@ class RootFrame(Frame):
         text_img_start.pack()
 
         bt2 = Button(self, text='添加商品', width=20, height=3,
-                     command=lambda: self.createProduct(text_industry.get(), text_country.get(),
+                     command=lambda: self.createProduct(text_name.get(), text_industry.get(), text_country.get(),
                                                         text_img_start.get(), text_bland_info.get(), self.bland))
         bt2.pack(padx=5, pady=10)
