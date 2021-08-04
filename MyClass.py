@@ -1,5 +1,9 @@
+#!python3
+# coding:utf8
+
 from tkinter import Tk, Frame, TOP, LEFT, END, Y, Label, Entry, BOTH, Button
-import xlsxwriter
+
+import os, csv
 
 
 class Product:
@@ -76,10 +80,11 @@ def change_label(name, test_output):
 
 
 class ProductFrame(Frame):
-    def __init__(self, bland):
+    def __init__(self, bland, submitted=False):
         super().__init__()
         self.initUI()
         self.bland = bland
+        self.submitted = submitted
 
     def buttonSubmit(self, name1, spec1, info1, name2, spec2, info2, name3, spec3, info3, name4, spec4, info4, name5,
                      spec5, info5, output):
@@ -103,6 +108,36 @@ class ProductFrame(Frame):
                                                     name4.get(), spec4.get(), info4.get(),
                                                     name5.get(), spec5.get(), info5.get())
 
+        fieldnames = ['classid', 'title', 'ftitle', 'newstext', 'titlepic', 'category', 'subcategory', 'Tags']
+        if os.path.exists('批量上传.csv'):
+            if self.submitted:
+                with open('批量上传.csv', 'r+', encoding='utf-8-sig') as csv_file:
+                    reader = list(csv.reader(csv_file, skipinitialspace=True))
+
+                with open('批量上传.csv', 'w', newline='', encoding='utf-8-sig') as csv_file:
+                    writer = csv.writer(csv_file)
+                    for row in reader[:-1]:
+                        writer.writerows([row])
+                        print(row)
+
+            with open('批量上传.csv', 'a', newline='', encoding='utf-8-sig') as csv_file:
+
+                writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+                writer.writerow(
+                    {'classid': 1, 'title': self.bland.name, 'ftitle': self.bland.name, 'newstext': text_output,
+                     'titlepic': 'http://info.aoyoumall.com/Mypicture/' + self.bland.bland_num + '.jpg',
+                     'category': self.bland.country, 'subcategory': self.bland.industry, 'Tags': ''})
+        else:
+            with open('批量上传.csv', 'w', newline='', encoding='utf-8-sig') as csv_file:
+                writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+                writer.writeheader()
+                writer.writerow(
+                    {'classid': 1, 'title': self.bland.name, 'ftitle': self.bland.name, 'newstext': text_output,
+                     'titlepic': 'http://info.aoyoumall.com/Mypicture/' + self.bland.bland_num + '.jpg',
+                     'category': self.bland.country, 'subcategory': self.bland.industry, 'Tags': ''})
+
+        self.submitted = True
+        '''
         workbook = xlsxwriter.Workbook('批量上传.xlsx')
         worksheet = workbook.add_worksheet()
         worksheet.write('A1', 'classid')
@@ -124,6 +159,7 @@ class ProductFrame(Frame):
         worksheet.write('H2', '')
 
         workbook.close()
+        '''
 
     def initUI(self):
         self.master.title("批量上传助手 Beta version")
