@@ -64,9 +64,18 @@ class Bland:
             for product in self.product_list:
                 product.setNum(int(self.bland_num) + i)
                 i += 1
+                if product.specification == '':
+                    html_spec = ''
+                else:
+                    html_spec = '<p>规格：' + product.specification + '</p>'
+                if product.info == '':
+                    html_info = ''
+                else:
+                    html_info = '<p>' + product.specification + '</p>'
+
                 productsinfo = productsinfo + '<hr /><h3>' + product.name + \
                                '</h3><img src="http://info.aoyoumall.com/Mypicture/' + str(product.num) + \
-                               '.jpg" /><p>规格：' + product.specification + '</p><p>' + product.info + '</p> '
+                               '.jpg" />' + html_spec + html_info
             return productsinfo
 
     def getInfo(self):
@@ -86,20 +95,23 @@ class ProductFrame(Frame):
         self.bland = bland
         self.submitted = submitted
 
+    # 提交按键
+    # 点击之后获取所有文本框内所填信息, 将商品信息加到product列表中，
+    # 之后将所有文本框清空, 并将所得信息汇总并将HTML代码在输出文本框中输出
     def buttonSubmit(self, name1, spec1, info1, name2, spec2, info2, name3, spec3, info3, name4, spec4, info4, name5,
                      spec5, info5, output):
         change_label(self.bland.combineInfoProduct(name1.get(), spec1.get(), info1.get(),
                                                    name2.get(), spec2.get(), info2.get(),
                                                    name3.get(), spec3.get(), info3.get(),
                                                    name4.get(), spec4.get(), info4.get(),
-                                                   name5.get(), spec5.get(), info5.get()),
-                     output),
+                                                   name5.get(), spec5.get(), info5.get()), output),
         name1.delete(0, END), spec1.delete(0, END), info1.delete(0, END),
         name2.delete(0, END), spec2.delete(0, END), info2.delete(0, END),
         name3.delete(0, END), spec3.delete(0, END), info3.delete(0, END),
         name4.delete(0, END), spec4.delete(0, END), info4.delete(0, END),
         name5.delete(0, END), spec5.delete(0, END), info5.delete(0, END)
 
+    #
     def buttonExport(self, name1, spec1, info1, name2, spec2, info2, name3, spec3, info3, name4, spec4, info4, name5,
                      spec5, info5):
         text_output = self.bland.combineInfoProduct(name1.get(), spec1.get(), info1.get(),
@@ -109,18 +121,18 @@ class ProductFrame(Frame):
                                                     name5.get(), spec5.get(), info5.get())
 
         fieldnames = ['classid', 'title', 'ftitle', 'newstext', 'titlepic', 'category', 'subcategory', 'Tags']
-        if os.path.exists('批量上传.csv'):
+        if os.path.exists('01批量上传.csv'):
             if self.submitted:
-                with open('批量上传.csv', 'r+', encoding='utf-8-sig') as csv_file:
+                with open('01批量上传.csv', 'r+', encoding='utf-8-sig') as csv_file:
                     reader = list(csv.reader(csv_file, skipinitialspace=True))
 
-                with open('批量上传.csv', 'w', newline='', encoding='utf-8-sig') as csv_file:
+                with open('01批量上传.csv', 'w', newline='', encoding='utf-8-sig') as csv_file:
                     writer = csv.writer(csv_file)
                     for row in reader[:-1]:
                         writer.writerows([row])
                         print(row)
 
-            with open('批量上传.csv', 'a', newline='', encoding='utf-8-sig') as csv_file:
+            with open('01批量上传.csv', 'a', newline='', encoding='utf-8-sig') as csv_file:
 
                 writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
                 writer.writerow(
@@ -128,7 +140,7 @@ class ProductFrame(Frame):
                      'titlepic': 'http://info.aoyoumall.com/Mypicture/' + self.bland.bland_num + '.jpg',
                      'category': self.bland.country, 'subcategory': self.bland.industry, 'Tags': ''})
         else:
-            with open('批量上传.csv', 'w', newline='', encoding='utf-8-sig') as csv_file:
+            with open('01批量上传.csv', 'w', newline='', encoding='utf-8-sig') as csv_file:
                 writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
                 writer.writeheader()
                 writer.writerow(
@@ -137,32 +149,9 @@ class ProductFrame(Frame):
                      'category': self.bland.country, 'subcategory': self.bland.industry, 'Tags': ''})
 
         self.submitted = True
-        '''
-        workbook = xlsxwriter.Workbook('批量上传.xlsx')
-        worksheet = workbook.add_worksheet()
-        worksheet.write('A1', 'classid')
-        worksheet.write('B1', 'title')
-        worksheet.write('C1', 'ftitle')
-        worksheet.write('D1', 'newstext')
-        worksheet.write('E1', 'titlepic')
-        worksheet.write('F1', 'category')
-        worksheet.write('G1', 'subcategory')
-        worksheet.write('H1', 'Tags')
-
-        worksheet.write('A2', 1)
-        worksheet.write('B2', self.bland.name)
-        worksheet.write('C2', self.bland.name)
-        worksheet.write('D2', text_output)
-        worksheet.write('E2', 'http://info.aoyoumall.com/Mypicture/' + self.bland.bland_num + '.jpg')
-        worksheet.write('F2', self.bland.country)
-        worksheet.write('G2', self.bland.industry)
-        worksheet.write('H2', '')
-
-        workbook.close()
-        '''
 
     def initUI(self):
-        self.master.title("批量上传助手 Beta version")
+        self.master.title("批量上传助手 2.0 version")
         self.pack(fill=BOTH, expand=True)
 
         frame1 = Frame(self)
@@ -261,7 +250,7 @@ class RootFrame(Frame):
         product.mainloop()
 
     def initUI(self):
-        self.master.title("批量上传助手 Beta version")
+        self.master.title("批量上传助手 2.0 version")
         self.pack(fill=BOTH, expand=True)
 
         Label(self, text='品牌').pack()
