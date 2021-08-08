@@ -51,9 +51,9 @@ class Bland:
         return self.getInfo()
 
     def getBlandInfo(self):
-        return '<hr /><h3>产品类型</h3><p style="text-align: center;">' + self.industry + ',' + self.country + \
-               '</p><hr /><h3>厂家介绍</h3><img src="http://info.aoyoumall.com/Mypicture/' + self.bland_num + \
-               '.jpg" /><p>' + self.info + '</p><hr /><h3>产品介绍</h3> '
+        return '<hr /><h3>产品类型</h3>\n<p style="text-align: center;">' + self.industry + ',' + self.country + \
+               '</p>\n<hr /><h3>厂家介绍</h3>\n<img src="http://info.aoyoumall.com/Mypicture/' + self.bland_num + \
+               '.jpg" />\n<p>' + self.info + '</p>\n<hr /><h3>产品介绍</h3> '
 
     def getProductInfo(self):
         if len(self.product_list) == 0:
@@ -64,18 +64,18 @@ class Bland:
             for product in self.product_list:
                 product.setNum(int(self.bland_num) + i)
                 i += 1
-                if product.specification == '':
+                if product.specification == '':     # 如果未填规格内容
                     html_spec = ''
                 else:
-                    html_spec = '<p>规格：' + product.specification + '</p>'
+                    html_spec = '<p>规格：' + product.specification + '</p>\n'   # 如果填写了规格内容
                 if product.info == '':
                     html_info = ''
                 else:
-                    html_info = '<p>' + product.specification + '</p>'
+                    html_info = '<p>' + product.info + '</p>'
 
-                productsinfo = productsinfo + '<hr /><h3>' + product.name + \
-                               '</h3><img src="http://info.aoyoumall.com/Mypicture/' + str(product.num) + \
-                               '.jpg" />' + html_spec + html_info
+                productsinfo = productsinfo + '\n<hr /><h3>' + product.name + \
+                               '</h3>\n<img src="http://info.aoyoumall.com/Mypicture/' + str(product.num) + \
+                               '.jpg" />\n' + html_spec + html_info
             return productsinfo
 
     def getInfo(self):
