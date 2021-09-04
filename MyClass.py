@@ -52,7 +52,7 @@ class Bland:
 
     def getBlandInfo(self):
         return '<hr /><h3>产品类型</h3>\n<p style="text-align: center;">' + self.industry + ',' + self.country + \
-               '</p>\n<hr /><h3>厂家介绍</h3>\n<img src="http://info.aoyoumall.com/Mypicture/' + self.bland_num + \
+               '</p>\n<hr /><h3>厂家介绍</h3>\n<img src="https://www.aoyoumall.com/picture/' + self.bland_num + \
                '.jpg" />\n<p>' + self.info + '</p>\n<hr /><h3>产品介绍</h3> '
 
     def getProductInfo(self):
@@ -74,7 +74,7 @@ class Bland:
                     html_info = '<p>' + product.info + '</p>'
 
                 productsinfo = productsinfo + '\n<hr /><h3>' + product.name + \
-                               '</h3>\n<img src="http://info.aoyoumall.com/Mypicture/' + str(product.num) + \
+                               '</h3>\n<img src="https://www.aoyoumall.com/picture/' + str(product.num) + \
                                '.jpg" />\n' + html_spec + html_info
             return productsinfo
 
@@ -137,7 +137,7 @@ class ProductFrame(Frame):
                 writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
                 writer.writerow(
                     {'classid': 1, 'title': self.bland.name, 'ftitle': self.bland.name, 'newstext': text_output,
-                     'titlepic': 'http://info.aoyoumall.com/Mypicture/' + self.bland.bland_num + '.jpg',
+                     'titlepic': 'https://www.aoyoumall.com/picture/' + self.bland.bland_num + '.jpg',
                      'category': self.bland.country, 'subcategory': self.bland.industry, 'Tags': ''})
         else:
             with open('01批量上传.csv', 'w', newline='', encoding='utf-8-sig') as csv_file:
@@ -145,7 +145,7 @@ class ProductFrame(Frame):
                 writer.writeheader()
                 writer.writerow(
                     {'classid': 1, 'title': self.bland.name, 'ftitle': self.bland.name, 'newstext': text_output,
-                     'titlepic': 'http://info.aoyoumall.com/Mypicture/' + self.bland.bland_num + '.jpg',
+                     'titlepic': 'https://www.aoyoumall.com/picture/' + self.bland.bland_num + '.jpg',
                      'category': self.bland.country, 'subcategory': self.bland.industry, 'Tags': ''})
 
         self.submitted = True
